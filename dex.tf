@@ -139,7 +139,7 @@ resource kubernetes_daemonset dex {
           ]
 
           port {
-            name           = "https"
+            name           = "http"
             container_port = 32000
           }
 
@@ -148,10 +148,10 @@ resource kubernetes_daemonset dex {
             mount_path = "/etc/dex/cfg"
           }
 
-          volume_mount {
-            name       = "tls"
-            mount_path = "/etc/dex/tls"
-          }
+          # volume_mount {
+          #   name       = "tls"
+          #   mount_path = "/etc/dex/tls"
+          # }
         }
 
         volume {
@@ -165,12 +165,12 @@ resource kubernetes_daemonset dex {
           }
         }
 
-        volume {
-          name = "tls"
-          secret {
-            secret_name = null_resource.default_cert_ready.0.triggers.secret_name
-          }
-        }
+        # volume {
+        #   name = "tls"
+        #   secret {
+        #     secret_name = null_resource.default_cert_ready.0.triggers.secret_name
+        #   }
+        # }
       }
     }
   }
@@ -187,17 +187,47 @@ resource kubernetes_service dex {
   }
 
   spec {
-    type = "NodePort"
+    type = "ClusterIP"
     selector = {
       "app" = "dex"
     }
 
     port {
-      name        = "dex"
+      name        = "http"
       port        = 32000
       protocol    = "TCP"
-      target_port = "https"
-      node_port   = 32000
+      target_port = "http"
+    }
+  }
+}
+
+resource kubernetes_ingress dex {
+  count = local.enable_dex ? 1 : 0
+  metadata {
+    name      = "dex"
+    namespace = "kube-system"
+    labels = {
+      "app" = "dex"
+    }
+
+    annotations = {
+      "kubernetes.io/ingress.class"                    = "nginx"
+      "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+      "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
+    }
+  }
+
+  spec {
+    rule {
+      host = var.dex_url
+      http {
+        path {
+          backend {
+            service_name = kubernetes_service.dex.0.metadata.0.name
+            service_port = "http"
+          }
+        }
+      }
     }
   }
 }

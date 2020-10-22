@@ -4,11 +4,11 @@ storage:
   config:
     inCluster: true
 web:
-  # http: 0.0.0.0:32000
-  https: 0.0.0.0:32000
-  tlsCert: /etc/dex/tls/tls.crt
-  tlsKey: /etc/dex/tls/tls.key
-  tlsClientCA: /etc/dex/tls/ca.crt
+  http: 0.0.0.0:32000
+  # https: 0.0.0.0:32000
+  # tlsCert: /etc/dex/tls/tls.crt
+  # tlsKey: /etc/dex/tls/tls.key
+  # tlsClientCA: /etc/dex/tls/ca.crt
 telemetry:
   http: 0.0.0.0:5558
 logger:
