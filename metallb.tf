@@ -9,129 +9,289 @@ resource kubernetes_namespace metallb_system {
   }
 }
 
-resource kubernetes_manifest metallb_controller_psp {
-  count    = local.enable_metallb ? 1 : 0
-  provider = kubernetes-alpha
+# Commented because it fails when planning with kubernetes-alpha provider
+# https://github.com/hashicorp/terraform-provider-kubernetes-alpha/issues/34
 
-  manifest = {
-    "apiVersion" = "policy/v1beta1"
-    "kind"       = "PodSecurityPolicy"
-    "metadata" = {
-      "labels" = {
-        "app" = "metallb"
+# resource kubernetes_manifest metallb_controller_psp {
+#   count    = local.enable_metallb ? 1 : 0
+#   provider = kubernetes-alpha
+
+#   manifest = {
+#     "apiVersion" = "policy/v1beta1"
+#     "kind"       = "PodSecurityPolicy"
+#     "metadata" = {
+#       "labels" = {
+#         "app" = "metallb"
+#       }
+#       "name"      = "controller"
+#       "namespace" = kubernetes_namespace.metallb_system.0.metadata.0.name
+#     }
+#     "spec" = {
+#       "allowPrivilegeEscalation"        = false
+#       "allowedCapabilities"             = []
+#       "allowedHostPaths"                = []
+#       "defaultAddCapabilities"          = []
+#       "defaultAllowPrivilegeEscalation" = false
+#       "fsGroup" = {
+#         "ranges" = [
+#           {
+#             "max" = 65535
+#             "min" = 1
+#           },
+#         ]
+#         "rule" = "MustRunAs"
+#       }
+#       "hostIPC"                = false
+#       "hostNetwork"            = false
+#       "hostPID"                = false
+#       "privileged"             = false
+#       "readOnlyRootFilesystem" = true
+#       "requiredDropCapabilities" = [
+#         "ALL",
+#       ]
+#       "runAsUser" = {
+#         "ranges" = [
+#           {
+#             "max" = 65535
+#             "min" = 1
+#           },
+#         ]
+#         "rule" = "MustRunAs"
+#       }
+#       "seLinux" = {
+#         "rule" = "RunAsAny"
+#       }
+#       "supplementalGroups" = {
+#         "ranges" = [
+#           {
+#             "max" = 65535
+#             "min" = 1
+#           },
+#         ]
+#         "rule" = "MustRunAs"
+#       }
+#       "volumes" = [
+#         "configMap",
+#         "secret",
+#         "emptyDir",
+#       ]
+#     }
+#   }
+# }
+
+resource null_resource metallb_controller_psp {
+  count    = local.enable_metallb ? 1 : 0
+
+  triggers = {
+    manifest = yamlencode(
+      {
+        "apiVersion" = "policy/v1beta1"
+        "kind"       = "PodSecurityPolicy"
+        "metadata" = {
+          "labels" = {
+            "app" = "metallb"
+          }
+          "name"      = "controller"
+          "namespace" = kubernetes_namespace.metallb_system.0.metadata.0.name
+        }
+        "spec" = {
+          "allowPrivilegeEscalation"        = false
+          "allowedCapabilities"             = []
+          "allowedHostPaths"                = []
+          "defaultAddCapabilities"          = []
+          "defaultAllowPrivilegeEscalation" = false
+          "fsGroup" = {
+            "ranges" = [
+              {
+                "max" = 65535
+                "min" = 1
+              },
+            ]
+            "rule" = "MustRunAs"
+          }
+          "hostIPC"                = false
+          "hostNetwork"            = false
+          "hostPID"                = false
+          "privileged"             = false
+          "readOnlyRootFilesystem" = true
+          "requiredDropCapabilities" = [
+            "ALL",
+          ]
+          "runAsUser" = {
+            "ranges" = [
+              {
+                "max" = 65535
+                "min" = 1
+              },
+            ]
+            "rule" = "MustRunAs"
+          }
+          "seLinux" = {
+            "rule" = "RunAsAny"
+          }
+          "supplementalGroups" = {
+            "ranges" = [
+              {
+                "max" = 65535
+                "min" = 1
+              },
+            ]
+            "rule" = "MustRunAs"
+          }
+          "volumes" = [
+            "configMap",
+            "secret",
+            "emptyDir",
+          ]
+        }
       }
-      "name"      = "controller"
-      "namespace" = kubernetes_namespace.metallb_system.0.metadata.0.name
-    }
-    "spec" = {
-      "allowPrivilegeEscalation"        = false
-      "allowedCapabilities"             = []
-      "allowedHostPaths"                = []
-      "defaultAddCapabilities"          = []
-      "defaultAllowPrivilegeEscalation" = false
-      "fsGroup" = {
-        "ranges" = [
-          {
-            "max" = 65535
-            "min" = 1
-          },
-        ]
-        "rule" = "MustRunAs"
-      }
-      "hostIPC"                = false
-      "hostNetwork"            = false
-      "hostPID"                = false
-      "privileged"             = false
-      "readOnlyRootFilesystem" = true
-      "requiredDropCapabilities" = [
-        "ALL",
-      ]
-      "runAsUser" = {
-        "ranges" = [
-          {
-            "max" = 65535
-            "min" = 1
-          },
-        ]
-        "rule" = "MustRunAs"
-      }
-      "seLinux" = {
-        "rule" = "RunAsAny"
-      }
-      "supplementalGroups" = {
-        "ranges" = [
-          {
-            "max" = 65535
-            "min" = 1
-          },
-        ]
-        "rule" = "MustRunAs"
-      }
-      "volumes" = [
-        "configMap",
-        "secret",
-        "emptyDir",
-      ]
-    }
+    )
+  }
+
+  provisioner "local-exec" {
+    command     = format("echo '%s'|kubectl apply -f -", self.triggers.manifest)
+    interpreter = ["/usr/bin/env", "bash", "-c"]
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    command     = format("echo '%s'|kubectl delete -f -", self.triggers.manifest)
+    interpreter = ["/usr/bin/env", "bash", "-c"]
   }
 }
 
-resource kubernetes_manifest metallb_speaker_psp {
-  count    = local.enable_metallb ? 1 : 0
-  provider = kubernetes-alpha
+# Commented because it fails when planning with kubernetes-alpha provider
+# https://github.com/hashicorp/terraform-provider-kubernetes-alpha/issues/34
 
-  manifest = {
-    "apiVersion" = "policy/v1beta1"
-    "kind"       = "PodSecurityPolicy"
-    "metadata" = {
-      "labels" = {
-        "app" = "metallb"
+# resource kubernetes_manifest metallb_speaker_psp {
+#   count    = local.enable_metallb ? 1 : 0
+#   provider = kubernetes-alpha
+
+#   manifest = {
+#     "apiVersion" = "policy/v1beta1"
+#     "kind"       = "PodSecurityPolicy"
+#     "metadata" = {
+#       "labels" = {
+#         "app" = "metallb"
+#       }
+#       "name"      = "speaker"
+#       "namespace" = kubernetes_namespace.metallb_system.0.metadata.0.name
+#     }
+#     "spec" = {
+#       "allowPrivilegeEscalation" = false
+#       "allowedCapabilities" = [
+#         "NET_ADMIN",
+#         "NET_RAW",
+#         "SYS_ADMIN",
+#       ]
+#       "allowedHostPaths"                = []
+#       "defaultAddCapabilities"          = []
+#       "defaultAllowPrivilegeEscalation" = false
+#       "fsGroup" = {
+#         "rule" = "RunAsAny"
+#       }
+#       "hostIPC"     = false
+#       "hostNetwork" = true
+#       "hostPID"     = false
+#       "hostPorts" = [
+#         {
+#           "max" = 7472
+#           "min" = 7472
+#         },
+#       ]
+#       "privileged"             = true
+#       "readOnlyRootFilesystem" = true
+#       "requiredDropCapabilities" = [
+#         "ALL",
+#       ]
+#       "runAsUser" = {
+#         "rule" = "RunAsAny"
+#       }
+#       "seLinux" = {
+#         "rule" = "RunAsAny"
+#       }
+#       "supplementalGroups" = {
+#         "rule" = "RunAsAny"
+#       }
+#       "volumes" = [
+#         "configMap",
+#         "secret",
+#         "emptyDir",
+#       ]
+#     }
+#   }
+# }
+
+resource null_resource metallb_speaker_psp {
+  count    = local.enable_metallb ? 1 : 0
+
+  triggers = {
+    manifest = yamlencode(
+      {
+        "apiVersion" = "policy/v1beta1"
+        "kind"       = "PodSecurityPolicy"
+        "metadata" = {
+          "labels" = {
+            "app" = "metallb"
+          }
+          "name"      = "speaker"
+          "namespace" = kubernetes_namespace.metallb_system.0.metadata.0.name
+        }
+        "spec" = {
+          "allowPrivilegeEscalation" = false
+          "allowedCapabilities" = [
+            "NET_ADMIN",
+            "NET_RAW",
+            "SYS_ADMIN",
+          ]
+          "allowedHostPaths"                = []
+          "defaultAddCapabilities"          = []
+          "defaultAllowPrivilegeEscalation" = false
+          "fsGroup" = {
+            "rule" = "RunAsAny"
+          }
+          "hostIPC"     = false
+          "hostNetwork" = true
+          "hostPID"     = false
+          "hostPorts" = [
+            {
+              "max" = 7472
+              "min" = 7472
+            },
+          ]
+          "privileged"             = true
+          "readOnlyRootFilesystem" = true
+          "requiredDropCapabilities" = [
+            "ALL",
+          ]
+          "runAsUser" = {
+            "rule" = "RunAsAny"
+          }
+          "seLinux" = {
+            "rule" = "RunAsAny"
+          }
+          "supplementalGroups" = {
+            "rule" = "RunAsAny"
+          }
+          "volumes" = [
+            "configMap",
+            "secret",
+            "emptyDir",
+          ]
+        }
       }
-      "name"      = "speaker"
-      "namespace" = kubernetes_namespace.metallb_system.0.metadata.0.name
-    }
-    "spec" = {
-      "allowPrivilegeEscalation" = false
-      "allowedCapabilities" = [
-        "NET_ADMIN",
-        "NET_RAW",
-        "SYS_ADMIN",
-      ]
-      "allowedHostPaths"                = []
-      "defaultAddCapabilities"          = []
-      "defaultAllowPrivilegeEscalation" = false
-      "fsGroup" = {
-        "rule" = "RunAsAny"
-      }
-      "hostIPC"     = false
-      "hostNetwork" = true
-      "hostPID"     = false
-      "hostPorts" = [
-        {
-          "max" = 7472
-          "min" = 7472
-        },
-      ]
-      "privileged"             = true
-      "readOnlyRootFilesystem" = true
-      "requiredDropCapabilities" = [
-        "ALL",
-      ]
-      "runAsUser" = {
-        "rule" = "RunAsAny"
-      }
-      "seLinux" = {
-        "rule" = "RunAsAny"
-      }
-      "supplementalGroups" = {
-        "rule" = "RunAsAny"
-      }
-      "volumes" = [
-        "configMap",
-        "secret",
-        "emptyDir",
-      ]
-    }
+    )
+  }
+
+  provisioner "local-exec" {
+    command     = format("echo '%s'|kubectl apply -f -", self.triggers.manifest)
+    interpreter = ["/usr/bin/env", "bash", "-c"]
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    command     = format("echo '%s'|kubectl delete -f -", self.triggers.manifest)
+    interpreter = ["/usr/bin/env", "bash", "-c"]
   }
 }
 

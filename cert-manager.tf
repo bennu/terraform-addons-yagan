@@ -39,7 +39,7 @@ resource null_resource cluster_issuer {
   count      = local.enable_cert_manager ? 1 : 0
 
   triggers = {
-    issuer = yamlencode(
+    manifest = yamlencode(
       {
         apiVersion = "cert-manager.io/v1alpha2"
         kind       = "ClusterIssuer"
@@ -81,13 +81,13 @@ resource null_resource cluster_issuer {
   }
 
   provisioner "local-exec" {
-    command     = format("echo '%s'|kubectl apply -f -", self.triggers.issuer)
+    command     = format("echo '%s'|kubectl apply -f -", self.triggers.manifest)
     interpreter = ["/usr/bin/env", "bash", "-c"]
   }
 
   provisioner "local-exec" {
     when        = destroy
-    command     = "kubectl delete clusterissuers.cert-manager.io letsencrypt"
+    command     = format("echo '%s'|kubectl delete -f -", self.triggers.manifest)
     interpreter = ["/usr/bin/env", "bash", "-c"]
   }
 }
@@ -97,7 +97,7 @@ resource null_resource default_cert {
   count      = local.enable_cert_manager ? 1 : 0
 
   triggers = {
-    default_cert = yamlencode(
+    manifest = yamlencode(
       {
         apiVersion = "cert-manager.io/v1alpha2"
         kind       = "Certificate"
@@ -122,13 +122,13 @@ resource null_resource default_cert {
   }
 
   provisioner "local-exec" {
-    command     = format("echo '%s'|kubectl apply -f -", self.triggers.default_cert)
+    command     = format("echo '%s'|kubectl apply -f -", self.triggers.manifest)
     interpreter = ["/usr/bin/env", "bash", "-c"]
   }
 
   provisioner "local-exec" {
     when        = destroy
-    command     = "kubectl delete certificates.cert-manager.io default-cert -n kube-system"
+    command     = format("echo '%s'|kubectl delete -f -", self.triggers.manifest)
     interpreter = ["/usr/bin/env", "bash", "-c"]
   }
 }

@@ -3,9 +3,6 @@ terraform {
     kubernetes = {
       source = "hashicorp/kubernetes"
     }
-    kubernetes-alpha = {
-      source = "hashicorp/kubernetes-alpha"
-    }
     random = {
       source = "hashicorp/random"
     }
