@@ -4,9 +4,9 @@ resource kubernetes_namespace klum {
   count = local.enable_klum ? 1 : 0
   metadata {
     name = "klum"
-  }
-  labels = {
-    "app" = "klum"
+    labels = {
+      "app" = "klum"
+    }
   }
 }
 
