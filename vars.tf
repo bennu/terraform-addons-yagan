@@ -1,4 +1,4 @@
-variable addons { default = "cert-manager,descheduler,dex,externaldns,gangway,ingress,kured,metallb" }
+variable addons { default = "cert-manager,descheduler,dex,externaldns,gangway,ingress,klum,kured,metallb" }
 
 # ingress
 variable ingress_autoscale { default = true }
