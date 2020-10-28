@@ -1,10 +1,20 @@
 # https://raw.githubusercontent.com/ibuildthecloud/klum/master/deploy.yaml
 
+resource kubernetes_namespace klum {
+  count = local.enable_klum ? 1 : 0
+  metadata {
+    name = "klum"
+  }
+  labels = {
+    "app" = "klum"
+  }
+}
+
 resource kubernetes_service_account klum {
   count = local.enable_klum ? 1 : 0
   metadata {
     name      = "klum"
-    namespace = "kube-system"
+    namespace = kubernetes_namespace.klum.0.metadata.0.name
     labels = {
       "app" = "klum"
     }
@@ -39,7 +49,7 @@ resource kubernetes_deployment klum {
   count = local.enable_klum ? 1 : 0
   metadata {
     name      = "klum"
-    namespace = "kube-system"
+    namespace = kubernetes_namespace.klum.0.metadata.0.name
     labels = {
       "app" = "klum"
     }
