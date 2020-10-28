@@ -80,7 +80,7 @@ resource kubernetes_namespace metallb_system {
 # }
 
 resource null_resource metallb_controller_psp {
-  count    = local.enable_metallb ? 1 : 0
+  count = local.enable_metallb ? 1 : 0
 
   triggers = {
     manifest = yamlencode(
@@ -223,7 +223,7 @@ resource null_resource metallb_controller_psp {
 # }
 
 resource null_resource metallb_speaker_psp {
-  count    = local.enable_metallb ? 1 : 0
+  count = local.enable_metallb ? 1 : 0
 
   triggers = {
     manifest = yamlencode(

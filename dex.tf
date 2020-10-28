@@ -213,6 +213,7 @@ resource kubernetes_ingress dex {
     annotations = {
       "kubernetes.io/ingress.class"                    = "nginx"
       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+      "nginx.ingress.kubernetes.io/proxy-buffer-size"  = "16k"
       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
     }
   }
