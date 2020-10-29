@@ -14,6 +14,10 @@ telemetry:
 logger:
   level: debug
   format: text
+expiry:
+  deviceRequests: ${dex_expiry_device_requests}
+  signingKeys: ${dex_expiry_signing_keys}
+  idTokens: ${dex_expiry_id_tokens}
 # This is a sample with LDAP as connector.
 # Requires a update to fulfill your environment.
 connectors:

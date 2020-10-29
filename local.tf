@@ -42,6 +42,9 @@ locals {
   }
 
   dex_config = {
+    dex_expiry_device_requests     = var.dex_expiry_device_requests
+    dex_expiry_id_tokens           = var.dex_expiry_id_tokens
+    dex_expiry_signing_keys        = var.dex_expiry_signing_keys
     dex_ldap_bind_dn               = var.dex_ldap_bind_dn
     dex_ldap_bind_pw               = var.dex_ldap_bind_pw
     dex_ldap_endpoint              = var.dex_ldap_endpoint

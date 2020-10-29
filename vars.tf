@@ -35,6 +35,9 @@ variable treshold_mem { default = 20 }
 variable treshold_pods { default = 20 }
 
 # auth-related vars
+variable dex_expiry_device_requests { default = "5m" }
+variable dex_expiry_id_tokens { default = "24h" }
+variable dex_expiry_signing_keys { default = "6h" }
 variable dex_ldap_bind_dn { default = "" }
 variable dex_ldap_bind_pw { default = "" }
 variable dex_ldap_endpoint { default = "" }
