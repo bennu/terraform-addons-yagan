@@ -1,4 +1,16 @@
 locals {
+  # hardcode versions
+  cert_manager_version     = "v1.0.3"
+  descheduler_version      = "0.19.0"
+  dex_image                = "dexidp/dex:v2.25.0"
+  external_dns_version     = "3.4.6"
+  gangway_image            = "gcr.io/heptio-images/gangway:v3.2.0"
+  ingress_version          = "3.7.1"
+  klum_image               = "ibuildthecloud/klum:v0.0.1-amd64"
+  kured_version            = "2.2.0"
+  metallb_controller_image = "metallb/controller:v0.9.3"
+  metallb_speaker_image    = "metallb/speaker:v0.9.3"
+
   acme_server              = var.acme_server == "production" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
   cert_manager_secret_name = local.enable_cert_manager ? kubernetes_secret.route53_cert_manager_credentials.0.metadata.0.name : ""
   dns_name                 = format("*.%s", var.dns_zone)
@@ -96,16 +108,4 @@ locals {
     local.enable_cert_manager ? { default-ssl-certificate = null_resource.default_cert_ready.0.triggers.default_cert } : {},
     var.ingress_extra_args
   )
-
-  # hardcode versions
-  cert_manager_version     = "v1.0.3"
-  descheduler_version      = "0.19.0"
-  dex_image                = "dexidp/dex:v2.25.0"
-  external_dns_version     = "3.4.6"
-  gangway_image            = "gcr.io/heptio-images/gangway:v3.2.0"
-  ingress_version          = "3.7.1"
-  klum_image               = "ibuildthecloud/klum:v0.0.1-amd64"
-  kured_version            = "2.2.0"
-  metallb_controller_image = "metallb/controller:v0.9.3"
-  metallb_speaker_image    = "metallb/speaker:v0.9.3"
 }
