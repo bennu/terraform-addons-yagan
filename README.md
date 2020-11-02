@@ -13,6 +13,11 @@ This modules deploys addons for a kubernetes cluster, such as:
 - [metallb][metallb]
 - [nginx ingress controller][nginx-ingress]
 
+This module requires:
+- [helm provider](https://registry.terraform.io/providers/hashicorp/helm/latest/docs)
+- [kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs)
+- `kubectl` + `kubeconfig` for some custom resources configuration and validations (***until the coming [kubernetes provider](https://registry.terraform.io/providers/hashicorp/kubernetes-alpha/latest/docs) is ready to use***)
+
 # Customization
 
 ## General
@@ -41,7 +46,7 @@ This modules deploys addons for a kubernetes cluster, such as:
 |`dex_ldap_groupsearch`|Enable LDAP/AD groupsearch||`true`|
 |`dex_ldap_insecure_no_ssl`|Insecure connection to LDAP/AD server||`true`|
 |`dex_ldap_ssl_skip_verify`|Do not verify TLS certs when connection to LDAP/AD server||`true`|
-|`dex_ldap_start_tls`|Execute Start/TLS operations||`false`|
+|`dex_ldap_start_tls`|Execute StartTLS operations||`false`|
 |`dex_ldap_username_prompt`|Username prompt field for LDAP/AD|X||
 |`dex_ldap_usersearch_basedn`|LDAP/AD domain to fetch usersearch from|X||
 |`dex_ldap_usersearch_emailattr`|LDAP/AD user attribute to fetch from usersearch|X||
@@ -50,9 +55,9 @@ This modules deploys addons for a kubernetes cluster, such as:
 |`dex_ldap_usersearch_nameattr`|LDAP/AD name attribute to fetch from usersearch|X||
 |`dex_ldap_usersearch_username`|LDAP/AD username to fetch from usersearch|||
 |`dex_ldap_usersearch`|Enable LDAP/AD usersearch||`true`|
-|`dex_oauth_skip_approval_screen`|Show approval screen||`true`|
+|`dex_oauth_skip_approval_screen`|Skip approval screen||`true`|
 |`dex_url`|FQDN for publishing dex through ingress controller|X||
-|`gangway_api_server_url`|Kubernetes API-Server URL for Gangway to connect to|||
+|`gangway_api_server_url`|Kubernetes API-Server URL for Gangway to print in the kubeconfig|||
 |`gangway_cluster_name`|Cluster name for Gangway config|X||
 |`gangway_url`|FQDN for publishing gangway through ingress controller|X||
 |`grafana_url`|URL for using dex auth in grafana||`""`|
@@ -81,7 +86,7 @@ According to [kured config][kured-config]
 
 |Variable|Description|Required|Default|
 |:---|---|:---:|:---|
-|`kured_start_time`|Star time to execute reboot operations||`22:00`|
+|`kured_start_time`|Start time to execute reboot operations||`22:00`|
 |`kured_end_time`|End time to execute reboot operations||`6:00`|
 |`kured_reboot_days`|Days allowed to reboot nodes||`["mon", "sat", "sun"]`|
 |`kured_timezone`|Timezone to set in kured||`America/Santiago`|
@@ -104,7 +109,7 @@ According to [ingress config][ingress-config]
 
 ## External DNS
 
-**Note:** This is only configure to work with AWS for now.
+**Note:** This is only configured to work with AWS for now.
 
 |Variable|Description|Required|Default|
 |:---|---|:---:|:---|
@@ -124,15 +129,13 @@ According to [ingress config][ingress-config]
 |Variable|Description|Required|Default|
 |:---|---|:---:|:---|
 |`acme_email`|Email for creating acme account||`""`|
-|`acme_server`|Server to fetch LE cert from||`"production"`|
+|`acme_server`|Server to fetch LE certs from (Valid values: `staging` and `production`)||`"production"`|
 |`cert_manager_access_key`|AWS access key to manage DNS zone||`30s`|
 |`cert_manager_aws_region`|AWS region to manage DNS zone||`us-east-1`|
 |`cert_manager_secret_key`|AWS secret key to manage DNS zone||`""`|
-|`zone_id`|Prefer CNAME records||`true`|
+|`zone_id`|DNS zone id to manage||`true`|
 
 ## MetalLB
-
-**Note:** This is only configure to work with AWS for now.
 
 |Variable|Description|Required|Default|
 |:---|---|:---:|:---|
