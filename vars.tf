@@ -12,10 +12,10 @@ variable ingress_service_monitor_enabled { default = false }
 variable ingress_service_type { default = "LoadBalancer" }
 
 # kured
-variable kured_start_time { default = "22:00" }
-variable kured_end_time { default = "6:00" }
-variable kured_reboot_days { default = ["mon", "sat", "sun"] }
-variable kured_timezone { default = "America/Santiago" }
+variable kured_start_time { default = "00:00" }
+variable kured_end_time { default = "23:59" }
+variable kured_reboot_days { default = ["mon", "tu", "we", "th", "fr", "sat", "sun"] }
+variable kured_timezone { default = "UTC" }
 
 # descheduler LowNodeUtilization config
 variable descheduler_low_node_utilization { default = true }
