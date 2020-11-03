@@ -96,6 +96,10 @@ resource kubernetes_deployment klum {
         container {
           image = local.klum_image
           name  = "klum"
+          env {
+            name  = "SERVER_NAME"
+            value = var.klum_api_server_url
+          }
         }
       }
     }

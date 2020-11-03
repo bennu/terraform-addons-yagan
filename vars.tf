@@ -211,7 +211,7 @@ variable dex_url {
   default     = ""
 }
 variable gangway_api_server_url {
-  description = "Kubernetes API-Server URL for Gangway to print in the kubeconfig"
+  description = "Kubernetes API-Server URL for Gangway to print in kubeconfig"
   default     = ""
 }
 variable gangway_cluster_name {
@@ -283,4 +283,10 @@ variable zone_id {
 variable metallb_addresses {
   description = "Range of IPs to configure metallb in layer2 mode"
   default     = ""
+}
+
+# klum
+variable klum_api_server_url {
+  description = "Kubernetes API-Server URL for Klum to print in kubeconfig"
+  default     = "https://localhost:6443"
 }
