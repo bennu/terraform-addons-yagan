@@ -3,7 +3,7 @@ resource helm_release gatekeeper {
   atomic           = true
   chart            = "gatekeeper"
   name             = "gatekeeper"
-  namespace        = "gatekeeper-system"
+  namespace        = "kube-system"
   repository       = "https://open-policy-agent.github.io/gatekeeper/charts"
   version          = local.gatekeeper_version
 }
