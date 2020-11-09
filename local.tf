@@ -91,6 +91,7 @@ locals {
   enable_dex          = contains(local.enable_addons, "dex")
   enable_externaldns  = contains(local.enable_addons, "externaldns")
   enable_gangway      = contains(local.enable_addons, "gangway")
+  enabled_gatekeeper  = contains(local.enable_addons, "gatekeeper")
   enable_ingress      = contains(local.enable_addons, "ingress")
   enable_klum         = contains(local.enable_addons, "klum")
   enable_kured        = contains(local.enable_addons, "kured")
