@@ -5,6 +5,7 @@ locals {
   dex_image                = "dexidp/dex:v2.25.0"
   external_dns_version     = "3.4.6"
   gangway_image            = "gcr.io/heptio-images/gangway:v3.2.0"
+  gatekeeper_version       = "3.2.0"
   ingress_version          = "3.7.1"
   klum_image               = "ibuildthecloud/klum:v0.0.1-amd64"
   kured_version            = "2.2.0"
