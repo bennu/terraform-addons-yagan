@@ -232,6 +232,7 @@ variable dns_zone {
   description = "DNS zone to manage"
   default     = ""
 }
+variable external_dns_provider { default = "aws" }
 variable external_dns_access_key {
   description = "AWS access key to manage DNS zone"
   default     = ""

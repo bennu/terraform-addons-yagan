@@ -80,7 +80,7 @@ locals {
     dex_ldap_usersearch_username   = var.dex_ldap_usersearch_username
     dex_oauth_skip_approval_screen = var.dex_oauth_skip_approval_screen
     dex_url                        = var.dex_url
-    gangway_client_secret          = local.enable_gangway ? random_string.gangway_random_key.1.result : "" # set for `terraform plan` to work
+    gangway_client_secret          = local.enable_gangway ? random_string.gangway_random_key.1.result : "randomkey" # set for `terraform plan` to work
     gangway_url                    = var.gangway_url
     grafana_url                    = var.grafana_url
   }
@@ -110,4 +110,22 @@ locals {
     local.enable_cert_manager ? { default-ssl-certificate = null_resource.default_cert_ready.0.triggers.default_cert } : {},
     var.ingress_extra_args
   )
+
+  external_dns_aws = var.external_dns_provider == "aws" ? local.external_dns_aws_config : {}
+  external_dns_aws_config = {
+    region      = var.external_dns_region
+    zoneType    = "public"
+    preferCNAME = var.external_dns_prefer_cname
+  }
+
+  external_dns_rfc = var.external_dns_provider == "rfc2136" ? local.external_dns_rfc_config : {}
+  external_dns_rfc_config = {
+    host      = var.external_dns_rfc_host
+    port = var.external_dns_rfc_port
+    zone = var.external_dns_rfc_zone
+    tsigSecretAlg = var.external_dns_rfc_alg
+    tsigAxfr = var.external_dns_rfc_axfr
+    minTTL = var.external_dns_rfc_ttl
+  }
+  extern
 }
