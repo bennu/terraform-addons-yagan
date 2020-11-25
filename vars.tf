@@ -233,7 +233,7 @@ variable dns_zone {
   default     = ""
 }
 variable external_dns_provider { default = "aws" }
-variable external_dns_access_key {
+variable external_dns_aws_access_key {
   description = "AWS access key to manage DNS zone"
   default     = ""
 }
@@ -241,17 +241,38 @@ variable external_dns_interval {
   description = "Interval to watch cluster for changes"
   default     = "30s"
 }
-variable external_dns_region {
+variable external_dns_aws_region {
   description = "AWS region to manage DNS zone"
   default     = "us-east-1"
 }
-variable external_dns_prefer_cname {
+variable external_dns_aws_prefer_cname {
   description = "Prefer CNAME records"
   default     = false
 }
-variable external_dns_secret_key {
+variable external_dns_aws_secret_key {
   description = "AWS secret key to manage DNS zone"
   default     = ""
+}
+variable external_dns_rfc_host {
+  default = ""
+}
+variable external_dns_rfc_ttl {
+  default = "0s"
+}
+variable external_dns_rfc_port {
+  default = 53
+}
+variable external_dns_rfc_axfr {
+  default = true
+}
+variable external_dns_rfc_alg {
+  default = ""
+}
+variable external_dns_rfc_secret {
+  default = ""
+}
+variable external_dns_rfc_zone {
+  default = ""
 }
 
 # cert-manager

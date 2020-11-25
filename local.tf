@@ -113,19 +113,19 @@ locals {
 
   external_dns_aws = var.external_dns_provider == "aws" ? local.external_dns_aws_config : {}
   external_dns_aws_config = {
-    region      = var.external_dns_region
+    region      = var.external_dns_aws_region
     zoneType    = "public"
-    preferCNAME = var.external_dns_prefer_cname
+    preferCNAME = var.external_dns_aws_prefer_cname
   }
 
   external_dns_rfc = var.external_dns_provider == "rfc2136" ? local.external_dns_rfc_config : {}
   external_dns_rfc_config = {
-    host      = var.external_dns_rfc_host
-    port = var.external_dns_rfc_port
-    zone = var.external_dns_rfc_zone
+    host          = var.external_dns_rfc_host
+    minTTL        = var.external_dns_rfc_ttl
+    port          = var.external_dns_rfc_port
+    tsigAxfr      = var.external_dns_rfc_axfr
     tsigSecretAlg = var.external_dns_rfc_alg
-    tsigAxfr = var.external_dns_rfc_axfr
-    minTTL = var.external_dns_rfc_ttl
+    zone          = var.external_dns_rfc_zone
   }
-  extern
+  external_dns_txt_owner_id = var.zone_id == "" ? local.resource_naming : var.zone_id
 }
