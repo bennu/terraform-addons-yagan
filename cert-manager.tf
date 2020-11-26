@@ -22,10 +22,10 @@ resource helm_release cert_manager {
   ]
 }
 
-resource kubernetes_secret route53_cert_manager_credentials {
+resource kubernetes_secret cert_manager_credentials {
   count = local.enable_cert_manager ? 1 : 0
   metadata {
-    name      = "route53-cert-manager-credentials"
+    name      = "cert-manager-credentials"
     namespace = kubernetes_namespace.cert_manager.0.metadata.0.name
   }
 
@@ -35,49 +35,49 @@ resource kubernetes_secret route53_cert_manager_credentials {
 }
 
 resource null_resource cluster_issuer {
-  depends_on = [helm_release.cert_manager, kubernetes_secret.route53_cert_manager_credentials]
+  depends_on = [helm_release.cert_manager, kubernetes_secret.cert_manager_credentials]
   count      = local.enable_cert_manager ? 1 : 0
 
   triggers = {
-    manifest = yamlencode(
-      {
-        apiVersion = "cert-manager.io/v1alpha2"
-        kind       = "ClusterIssuer"
-        metadata = {
-          name = "letsencrypt"
-        }
-        spec = {
-          acme = {
-            email  = var.acme_email
-            server = local.acme_server
-            privateKeySecretRef = {
-              name = "acme-cluster-issuer"
-            }
-            solvers = [
-              {
-                dns01 = {
-                  route53 = {
-                    hostedZoneID = var.zone_id
-                    region       = var.cert_manager_aws_region
-                    accessKeyID  = var.cert_manager_access_key
-                    secretAccessKeySecretRef = {
-                      name = local.cert_manager_secret_name
-                      key  = "secret_key"
-                    }
-                  }
-                }
-                selector = {
-                  dnsZones = [
-                    var.dns_zone
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      }
-
-    )
+    # manifest = yamlencode(
+    #   {
+    #     apiVersion = "cert-manager.io/v1alpha2"
+    #     kind       = "ClusterIssuer"
+    #     metadata = {
+    #       name = "letsencrypt"
+    #     }
+    #     spec = {
+    #       acme = {
+    #         email  = var.acme_email
+    #         server = local.acme_server
+    #         privateKeySecretRef = {
+    #           name = "acme-cluster-issuer"
+    #         }
+    #         solvers = [
+    #           {
+    #             dns01 = {
+    #               route53 = {
+    #                 hostedZoneID = var.zone_id
+    #                 region       = var.cert_manager_aws_region
+    #                 accessKeyID  = var.cert_manager_access_key
+    #                 secretAccessKeySecretRef = {
+    #                   name = local.cert_manager_secret_name
+    #                   key  = "secret_key"
+    #                 }
+    #               }
+    #             }
+    #             selector = {
+    #               dnsZones = [
+    #                 var.dns_zone
+    #               ]
+    #             }
+    #           }
+    #         ]
+    #       }
+    #     }
+    #   }
+    # )
+    manifest = templatefile(format("%s/files/cluster-issuer.yml", path.module), local.cert_manager_config)
   }
 
   provisioner "local-exec" {
@@ -93,7 +93,7 @@ resource null_resource cluster_issuer {
 }
 
 resource null_resource default_cert {
-  depends_on = [helm_release.cert_manager, kubernetes_secret.route53_cert_manager_credentials, null_resource.cluster_issuer]
+  depends_on = [helm_release.cert_manager, kubernetes_secret.cert_manager_credentials, null_resource.cluster_issuer]
   count      = local.enable_cert_manager ? 1 : 0
 
   triggers = {
@@ -110,7 +110,7 @@ resource null_resource default_cert {
           duration    = "2160h"
           renewBefore = "360h"
           issuerRef = {
-            name = "letsencrypt"
+            name = "acme"
             kind = "ClusterIssuer"
           }
           dnsNames = [
@@ -134,7 +134,7 @@ resource null_resource default_cert {
 }
 
 resource null_resource default_cert_ready {
-  depends_on = [helm_release.cert_manager, kubernetes_secret.route53_cert_manager_credentials, null_resource.cluster_issuer, null_resource.default_cert]
+  depends_on = [helm_release.cert_manager, kubernetes_secret.cert_manager_credentials, null_resource.cluster_issuer, null_resource.default_cert]
   count      = local.enable_cert_manager ? 1 : 0
 
   triggers = {

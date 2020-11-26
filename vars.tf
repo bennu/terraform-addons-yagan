@@ -263,7 +263,7 @@ variable external_dns_rfc_port {
   default = 53
 }
 variable external_dns_rfc_axfr {
-  default = true
+  default = false
 }
 variable external_dns_rfc_alg {
   default = ""
@@ -274,8 +274,17 @@ variable external_dns_rfc_secret {
 variable external_dns_rfc_zone {
   default = ""
 }
+variable external_dns_txt_owner_id {
+  default = ""
+}
+variable external_dns_rfc_key {
+  default = ""
+}
 
 # cert-manager
+variable cert_manager_provider {
+  default = "aws"
+}
 variable acme_email {
   description = "Email for creating acme account"
   default     = ""
@@ -299,6 +308,18 @@ variable cert_manager_secret_key {
 variable zone_id {
   description = "DNS zone id to manage"
   default     = ""
+}
+variable cert_manager_zone {
+  default = ""
+}
+variable cert_manager_rfc_nameserver {
+  default = ""
+}
+variable cert_manager_rfc_alg {
+  default = ""
+}
+variable cert_manager_rfc_key_name {
+  default = ""
 }
 
 # metallb
