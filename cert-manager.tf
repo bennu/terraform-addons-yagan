@@ -39,44 +39,6 @@ resource null_resource cluster_issuer {
   count      = local.enable_cert_manager ? 1 : 0
 
   triggers = {
-    # manifest = yamlencode(
-    #   {
-    #     apiVersion = "cert-manager.io/v1alpha2"
-    #     kind       = "ClusterIssuer"
-    #     metadata = {
-    #       name = "letsencrypt"
-    #     }
-    #     spec = {
-    #       acme = {
-    #         email  = var.acme_email
-    #         server = local.acme_server
-    #         privateKeySecretRef = {
-    #           name = "acme-cluster-issuer"
-    #         }
-    #         solvers = [
-    #           {
-    #             dns01 = {
-    #               route53 = {
-    #                 hostedZoneID = var.zone_id
-    #                 region       = var.cert_manager_aws_region
-    #                 accessKeyID  = var.cert_manager_access_key
-    #                 secretAccessKeySecretRef = {
-    #                   name = local.cert_manager_secret_name
-    #                   key  = "secret_key"
-    #                 }
-    #               }
-    #             }
-    #             selector = {
-    #               dnsZones = [
-    #                 var.dns_zone
-    #               ]
-    #             }
-    #           }
-    #         ]
-    #       }
-    #     }
-    #   }
-    # )
     manifest = templatefile(format("%s/files/cluster-issuer.yml", path.module), local.cert_manager_config)
   }
 
@@ -128,6 +90,7 @@ resource null_resource default_cert {
 
   provisioner "local-exec" {
     when        = destroy
+    on_failure  = continue
     command     = format("echo '%s'|kubectl delete -f -", self.triggers.manifest)
     interpreter = ["/usr/bin/env", "bash", "-c"]
   }
