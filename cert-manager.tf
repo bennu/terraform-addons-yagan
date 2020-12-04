@@ -17,11 +17,6 @@ resource helm_release cert_manager {
     yamlencode(
       {
         installCRDs  = true
-        podDnsPolicy = "None"
-        podDnsConfig = {
-          nameservers = ["1.1.1.1", "8.8.8.8"]
-        }
-        extraArgs = ["--dns01-recursive-nameservers-only","--dns01-recursive-nameservers=\"8.8.8.8:53,1.1.1.1:53\""]
       }
     )
   ]
