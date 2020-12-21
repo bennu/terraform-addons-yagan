@@ -130,11 +130,11 @@ locals {
   }
   external_dns_txt_owner_id = var.zone_id == "" ? var.external_dns_txt_owner_id : var.zone_id
   cert_manager_config = {
-    provider    = var.cert_manager_provider
-    secret_key  = local.cert_manager_secret_name
-    dns_zone    = var.cert_manager_zone
-    acme_email  = var.acme_email
-    acme_server = local.acme_server
+    provider      = var.cert_manager_provider
+    secret_key    = local.cert_manager_secret_name
+    dns_zone      = var.cert_manager_zone
+    acme_email    = var.acme_email
+    acme_server   = local.acme_server
     clusterissuer = format("acme-%s", var.cert_manager_zone)
 
     zone_id        = var.zone_id
