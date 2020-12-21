@@ -72,7 +72,7 @@ resource null_resource default_cert {
           duration    = "2160h"
           renewBefore = "360h"
           issuerRef = {
-            name = "acme"
+            name = lookup(local.cert_manager_config, "clusterissuer")
             kind = "ClusterIssuer"
           }
           dnsNames = [

@@ -1,16 +1,16 @@
 locals {
   # hardcode versions
   cert_manager_version     = "v1.1.0"
-  descheduler_version      = "0.19.0"
-  dex_image                = "dexidp/dex:v2.25.0"
-  external_dns_version     = "4.0.0"
+  descheduler_version      = "0.20.0"
+  dex_image                = "dexidp/dex:v2.27.0"
+  external_dns_version     = "4.3.0"
   gangway_image            = "gcr.io/heptio-images/gangway:v3.2.0"
   gatekeeper_version       = "3.2.0"
-  ingress_version          = "3.7.1"
+  ingress_version          = "3.15.2"
   klum_image               = "ibuildthecloud/klum:v0.0.1-amd64"
-  kured_version            = "2.2.0"
-  metallb_controller_image = "metallb/controller:v0.9.3"
-  metallb_speaker_image    = "metallb/speaker:v0.9.3"
+  kured_version            = "2.2.1"
+  metallb_controller_image = "metallb/controller:v0.9.5"
+  metallb_speaker_image    = "metallb/speaker:v0.9.5"
 
   acme_server              = var.acme_server == "production" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
   cert_manager_secret_name = local.enable_cert_manager ? kubernetes_secret.cert_manager_credentials.0.metadata.0.name : ""
@@ -135,6 +135,7 @@ locals {
     dns_zone    = var.cert_manager_zone
     acme_email  = var.acme_email
     acme_server = local.acme_server
+    clusterissuer = format("acme-%s", var.cert_manager_zone)
 
     zone_id        = var.zone_id
     aws_region     = var.cert_manager_aws_region
