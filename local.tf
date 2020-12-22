@@ -3,7 +3,7 @@ locals {
   cert_manager_version     = "v1.1.0"
   descheduler_version      = "0.20.0"
   dex_image                = "dexidp/dex:v2.27.0"
-  external_dns_version     = "4.3.0"
+  external_dns_version     = "4.5.0"
   gangway_image            = "gcr.io/heptio-images/gangway:v3.2.0"
   gatekeeper_version       = "3.2.0"
   ingress_version          = "3.15.2"
