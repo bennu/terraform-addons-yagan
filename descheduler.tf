@@ -1,7 +1,7 @@
 resource helm_release descheduler {
   count      = local.enable_descheduler ? 1 : 0
   atomic     = true
-  chart      = "descheduler-helm-chart"
+  chart      = "descheduler"
   name       = "descheduler"
   namespace  = "kube-system"
   repository = "https://kubernetes-sigs.github.io/descheduler/"
