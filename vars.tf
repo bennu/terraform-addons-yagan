@@ -232,7 +232,11 @@ variable dns_zone {
   description = "DNS zone to manage"
   default     = ""
 }
-variable external_dns_access_key {
+variable external_dns_provider {
+  description = "external-dns provider to use as add-on"
+  default     = "aws"
+}
+variable external_dns_aws_access_key {
   description = "AWS access key to manage DNS zone"
   default     = ""
 }
@@ -240,20 +244,60 @@ variable external_dns_interval {
   description = "Interval to watch cluster for changes"
   default     = "30s"
 }
-variable external_dns_region {
+variable external_dns_aws_region {
   description = "AWS region to manage DNS zone"
   default     = "us-east-1"
 }
-variable external_dns_prefer_cname {
+variable external_dns_aws_prefer_cname {
   description = "Prefer CNAME records"
   default     = false
 }
-variable external_dns_secret_key {
+variable external_dns_aws_secret_key {
   description = "AWS secret key to manage DNS zone"
+  default     = ""
+}
+variable external_dns_rfc_host {
+  description = "DNS zone for RFC server"
+  default     = ""
+}
+variable external_dns_rfc_ttl {
+  description = "default RFC DNS record TTL"
+  default     = "0s"
+}
+variable external_dns_rfc_port {
+  description = "Default port for RFC DNS"
+  default     = 53
+}
+variable external_dns_rfc_axfr {
+  description = "enable zone transfers for RFC DNS"
+  default     = false
+}
+variable external_dns_rfc_alg {
+  description = "TSIG Algorithm used in RFC DNS"
+  default     = ""
+}
+variable external_dns_rfc_secret {
+  description = "TSIG secret used in RFC DNS"
+  default     = ""
+}
+variable external_dns_rfc_zone {
+  description = "Zone used on RFC DNS"
+  default     = ""
+}
+variable external_dns_txt_owner_id {
+  description = "Owner used on RFC DNS"
+  default     = ""
+}
+variable external_dns_rfc_key {
+  description = "TSIG key used in RFC DNS"
   default     = ""
 }
 
 # cert-manager
+variable cert_manager_provider {
+  description = "cert-manager provider to use as add-on"
+  default     = "aws"
+}
 variable acme_email {
   description = "Email for creating acme account"
   default     = ""
@@ -276,6 +320,22 @@ variable cert_manager_secret_key {
 }
 variable zone_id {
   description = "DNS zone id to manage"
+  default     = ""
+}
+variable cert_manager_zone {
+  description = "DNS zone to manage certificates"
+  default     = ""
+}
+variable cert_manager_rfc_nameserver {
+  description = "Address of authoritative nameserver DNS with port"
+  default     = ""
+}
+variable cert_manager_rfc_alg {
+  description = "TSIG Algorithm used in RFC DNS"
+  default     = ""
+}
+variable cert_manager_rfc_key_name {
+  description = "TSIG key used in RFC DNS"
   default     = ""
 }
 

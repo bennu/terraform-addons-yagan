@@ -1,19 +1,19 @@
 locals {
   # hardcode versions
-  cert_manager_version     = "v1.0.3"
-  descheduler_version      = "0.19.0"
-  dex_image                = "dexidp/dex:v2.25.0"
-  external_dns_version     = "3.4.6"
+  cert_manager_version     = "v1.1.0"
+  descheduler_version      = "0.20.0"
+  dex_image                = "dexidp/dex:v2.27.0"
+  external_dns_version     = "4.5.0"
   gangway_image            = "gcr.io/heptio-images/gangway:v3.2.0"
   gatekeeper_version       = "3.2.0"
-  ingress_version          = "3.7.1"
+  ingress_version          = "3.15.2"
   klum_image               = "ibuildthecloud/klum:v0.0.1-amd64"
-  kured_version            = "2.2.0"
-  metallb_controller_image = "metallb/controller:v0.9.3"
-  metallb_speaker_image    = "metallb/speaker:v0.9.3"
+  kured_version            = "2.2.1"
+  metallb_controller_image = "metallb/controller:v0.9.5"
+  metallb_speaker_image    = "metallb/speaker:v0.9.5"
 
   acme_server              = var.acme_server == "production" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
-  cert_manager_secret_name = local.enable_cert_manager ? kubernetes_secret.route53_cert_manager_credentials.0.metadata.0.name : ""
+  cert_manager_secret_name = local.enable_cert_manager ? kubernetes_secret.cert_manager_credentials.0.metadata.0.name : ""
   dns_name                 = format("*.%s", var.dns_zone)
   descheduler_policy = {
     strategies = {
@@ -80,7 +80,7 @@ locals {
     dex_ldap_usersearch_username   = var.dex_ldap_usersearch_username
     dex_oauth_skip_approval_screen = var.dex_oauth_skip_approval_screen
     dex_url                        = var.dex_url
-    gangway_client_secret          = local.enable_gangway ? random_string.gangway_random_key.1.result : "" # set for `terraform plan` to work
+    gangway_client_secret          = local.enable_gangway ? random_string.gangway_random_key.1.result : "randomkey" # set for `terraform plan` to work
     gangway_url                    = var.gangway_url
     grafana_url                    = var.grafana_url
   }
@@ -110,4 +110,39 @@ locals {
     local.enable_cert_manager ? { default-ssl-certificate = null_resource.default_cert_ready.0.triggers.default_cert } : {},
     var.ingress_extra_args
   )
+
+  external_dns_aws = var.external_dns_provider == "aws" ? local.external_dns_aws_config : {}
+  external_dns_aws_config = {
+    region      = var.external_dns_aws_region
+    zoneType    = "public"
+    preferCNAME = var.external_dns_aws_prefer_cname
+  }
+
+  external_dns_rfc = var.external_dns_provider == "rfc2136" ? local.external_dns_rfc_config : {}
+  external_dns_rfc_config = {
+    host          = var.external_dns_rfc_host
+    minTTL        = var.external_dns_rfc_ttl
+    port          = var.external_dns_rfc_port
+    tsigAxfr      = var.external_dns_rfc_axfr
+    tsigSecretAlg = var.external_dns_rfc_alg
+    zone          = var.external_dns_rfc_zone
+    tsigKeyname   = var.external_dns_rfc_key
+  }
+  external_dns_txt_owner_id = var.zone_id == "" ? var.external_dns_txt_owner_id : var.zone_id
+  cert_manager_config = {
+    provider      = var.cert_manager_provider
+    secret_key    = local.cert_manager_secret_name
+    dns_zone      = var.cert_manager_zone
+    acme_email    = var.acme_email
+    acme_server   = local.acme_server
+    clusterissuer = format("acme-%s", var.cert_manager_zone)
+
+    zone_id        = var.zone_id
+    aws_region     = var.cert_manager_aws_region
+    aws_access_key = var.cert_manager_access_key
+
+    rfc_server   = var.cert_manager_rfc_nameserver
+    rfc_key_name = var.cert_manager_rfc_key_name
+    rfc_alg      = var.cert_manager_rfc_alg
+  }
 }

@@ -8,24 +8,25 @@ resource helm_release external_dns {
   version    = local.external_dns_version
   set_sensitive {
     name  = "aws.credentials.accessKey"
-    value = var.external_dns_access_key
+    value = var.external_dns_aws_access_key
   }
   set_sensitive {
     name  = "aws.credentials.secretKey"
-    value = var.external_dns_secret_key
+    value = var.external_dns_aws_secret_key
+  }
+  set_sensitive {
+    name  = "rfc2136.tsigSecret"
+    value = var.external_dns_rfc_secret
   }
   values = [
     yamlencode(
       {
-        provider = "aws"
-        aws = {
-          region      = var.external_dns_region
-          zoneType    = "public"
-          preferCNAME = var.external_dns_prefer_cname
-        }
+        provider          = var.external_dns_provider
+        aws               = local.external_dns_aws
+        rfc2136           = local.external_dns_rfc
         interval          = var.external_dns_interval
         priorityClassName = "system-cluster-critical"
-        txtOwnerId        = var.zone_id
+        txtOwnerId        = local.external_dns_txt_owner_id
         zoneIdFilters     = [var.zone_id]
       }
     )
