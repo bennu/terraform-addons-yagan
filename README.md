@@ -26,6 +26,13 @@ This modules deploys addons for a kubernetes cluster, such as:
 |------|---------|
 | terraform | `>= 0.13` |
 
+### Providers
+
+| Name | Version |
+|------|---------|
+| helm | `2.0.1` |
+| kubernetes | `1.13.3` |
+
 # Customization
 
 ## General
