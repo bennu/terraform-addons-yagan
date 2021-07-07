@@ -322,6 +322,10 @@ variable zone_id {
   description = "DNS zone id to manage"
   default     = ""
 }
+variable create_default_cert {
+  description = "Create a default certificate of dns resolver"
+  default     = true
+}
 variable cert_manager_zone {
   description = "DNS zone to manage certificates"
   default     = ""

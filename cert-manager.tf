@@ -56,7 +56,7 @@ resource null_resource cluster_issuer {
 
 resource null_resource default_cert {
   depends_on = [helm_release.cert_manager, kubernetes_secret.cert_manager_credentials, null_resource.cluster_issuer]
-  count      = local.enable_cert_manager ? 1 : 0
+  count      = local.enable_cert_manager && var.create_default_cert ? 1 : 0
 
   triggers = {
     manifest = yamlencode(
@@ -98,7 +98,7 @@ resource null_resource default_cert {
 
 resource null_resource default_cert_ready {
   depends_on = [helm_release.cert_manager, kubernetes_secret.cert_manager_credentials, null_resource.cluster_issuer, null_resource.default_cert]
-  count      = local.enable_cert_manager ? 1 : 0
+  count      = local.enable_cert_manager && var.create_default_cert ? 1 : 0
 
   triggers = {
     default_cert = "kube-system/default-cert"

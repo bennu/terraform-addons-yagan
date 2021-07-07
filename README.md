@@ -166,6 +166,7 @@ According to [ingress config][ingress-config]
 | cert_manager_rfc_nameserver | Address of authoritative nameserver DNS with port | `string` | `""` | no |
 | cert_manager_secret_key | AWS secret key to manage DNS zone | `string` | `""` | no |
 | cert_manager_zone | DNS zone to manage certificates | `string` | `""` | no |
+| create_default_cert | Create a default certificate of dns resolver | `bool` | `true` | no |
 | zone_id | DNS zone id to manage | `string` | `""` | no |
 
 ## MetalLB
