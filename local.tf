@@ -107,7 +107,7 @@ locals {
 
   ingress_deploy_deps = [local.enable_cert_manager ? null_resource.default_cert_ready : null]
   ingress_extra_args = merge(
-    local.enable_cert_manager ? { default-ssl-certificate = null_resource.default_cert_ready.0.triggers.default_cert } : {},
+    local.enable_cert_manager && var.create_default_cert ? { default-ssl-certificate = null_resource.default_cert_ready.0.triggers.default_cert } : {},
     var.ingress_extra_args
   )
 
