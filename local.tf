@@ -13,7 +13,7 @@ locals {
   metallb_speaker_image    = "metallb/speaker:v0.9.5"
 
   acme_server              = var.acme_server == "production" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
-  cert_manager_secret_name = local.enable_cert_manager ? kubernetes_secret.cert_manager_credentials.0.metadata.0.name : ""
+  cert_manager_secret_name = local.enable_cert_manager && var.create_default_cert ? kubernetes_secret.cert_manager_credentials.0.metadata.0.name : ""
   dns_name                 = format("*.%s", var.dns_zone)
   descheduler_policy = {
     strategies = {

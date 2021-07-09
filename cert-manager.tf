@@ -23,7 +23,7 @@ resource helm_release cert_manager {
 }
 
 resource kubernetes_secret cert_manager_credentials {
-  count = local.enable_cert_manager ? 1 : 0
+  count = local.enable_cert_manager && var.create_default_cert ? 1 : 0
   metadata {
     name      = "cert-manager-credentials"
     namespace = kubernetes_namespace.cert_manager.0.metadata.0.name
