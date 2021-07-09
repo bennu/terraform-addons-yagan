@@ -36,7 +36,7 @@ resource kubernetes_secret cert_manager_credentials {
 
 resource null_resource cluster_issuer {
   depends_on = [helm_release.cert_manager, kubernetes_secret.cert_manager_credentials]
-  count      = local.enable_cert_manager ? 1 : 0
+  count      = local.enable_cert_manager && var.create_default_cert ? 1 : 0
 
   triggers = {
     manifest = templatefile(format("%s/files/cluster-issuer.yml", path.module), local.cert_manager_config)
