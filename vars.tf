@@ -1,6 +1,6 @@
 variable addons {
   description = "Comma-separated list of to-be enabled addons"
-  default     = "cert-manager,descheduler,dex,externaldns,gangway,gatekeeper,ingress,klum,kured,metallb"
+  default     = "cert-manager"
 }
 
 # ingress

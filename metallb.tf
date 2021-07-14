@@ -605,7 +605,7 @@ resource kubernetes_daemonset metallb_speaker {
             }
           }
           resources {
-            limits {
+            limits = {
               cpu    = "100m"
               memory = "100Mi"
             }
@@ -673,7 +673,7 @@ resource kubernetes_deployment metallb_controller {
             container_port = 7472
           }
           resources {
-            limits {
+            limits = {
               cpu    = "100m"
               memory = "100Mi"
             }
@@ -735,7 +735,7 @@ resource kubernetes_config_map metallb_config {
           {
             name      = "default"
             protocol  = "layer2"
-            addresses = list(var.metallb_addresses)
+            addresses = tolist([var.metallb_addresses])
           }
         ]
       }

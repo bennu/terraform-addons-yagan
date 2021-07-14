@@ -129,12 +129,12 @@ resource kubernetes_daemonset gangway {
           }
 
           resources {
-            requests {
+            requests = {
               cpu    = "100m"
               memory = "128Mi"
             }
 
-            limits {
+            limits = {
               cpu    = "200m"
               memory = "512Mi"
             }
